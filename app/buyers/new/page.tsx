@@ -18,13 +18,6 @@ export default function CreateBuyerPage() {
 
   const onSubmit = async (data: any) => {
     try {
-      if (typeof data.tags === "string") {
-        data.tags = data.tags
-          .split(",")
-          .map((t: string) => t.trim())
-          .filter(Boolean);
-      }
-
       const res = await fetch("/api/buyers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -32,13 +25,10 @@ export default function CreateBuyerPage() {
       });
 
       if (!res.ok) {
-        const errorData = await res.json();
-        console.log("Error:", errorData);
+        console.error("Server error:", await res.json());
         return;
       }
 
-      const buyer = await res.json();
-      console.log("Created buyer:", buyer);
       alert("Buyer created successfully!");
     } catch (err) {
       console.error(err);
@@ -56,34 +46,34 @@ export default function CreateBuyerPage() {
       <h1 className="text-3xl font-bold mb-6 text-gray-800">Create Buyer Lead</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Full Name */}
+        {/* --- Full Name --- */}
         <div>
           <label className={labelClass}>Full Name</label>
           <input {...register("fullName")} className={inputClass} />
-          {(errors.fullName as any)?.message && (
-            <p className={errorClass}>{(errors.fullName as any)?.message}</p>
+          {errors.fullName?.message && (
+            <p className={errorClass}>{errors.fullName.message}</p>
           )}
         </div>
 
-        {/* Email */}
+        {/* --- Email --- */}
         <div>
           <label className={labelClass}>Email</label>
           <input {...register("email")} className={inputClass} />
-          {(errors.email as any)?.message && (
-            <p className={errorClass}>{(errors.email as any)?.message}</p>
+          {errors.email?.message && (
+            <p className={errorClass}>{errors.email.message}</p>
           )}
         </div>
 
-        {/* Phone */}
+        {/* --- Phone --- */}
         <div>
           <label className={labelClass}>Phone</label>
           <input {...register("phone")} className={inputClass} />
-          {(errors.phone as any)?.message && (
-            <p className={errorClass}>{(errors.phone as any)?.message}</p>
+          {errors.phone?.message && (
+            <p className={errorClass}>{errors.phone.message}</p>
           )}
         </div>
 
-        {/* City & Property Type in a row */}
+        {/* --- City & Property Type --- */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className={labelClass}>City</label>
@@ -96,8 +86,8 @@ export default function CreateBuyerPage() {
                 )
               )}
             </select>
-            {(errors.city as any)?.message && (
-              <p className={errorClass}>{(errors.city as any)?.message}</p>
+            {errors.city?.message && (
+              <p className={errorClass}>{errors.city.message}</p>
             )}
           </div>
 
@@ -110,13 +100,13 @@ export default function CreateBuyerPage() {
                 </option>
               ))}
             </select>
-            {(errors.propertyType as any)?.message && (
-              <p className={errorClass}>{(errors.propertyType as any)?.message}</p>
+            {errors.propertyType?.message && (
+              <p className={errorClass}>{errors.propertyType.message}</p>
             )}
           </div>
         </div>
 
-        {/* Conditional BHK */}
+        {/* --- Conditional BHK --- */}
         {["Apartment", "Villa"].includes(propertyType) && (
           <div>
             <label className={labelClass}>BHK</label>
@@ -127,13 +117,13 @@ export default function CreateBuyerPage() {
                 </option>
               ))}
             </select>
-            {(errors.bhk as any)?.message && (
-              <p className={errorClass}>{(errors.bhk as any)?.message}</p>
+            {errors.bhk?.message && (
+              <p className={errorClass}>{errors.bhk.message}</p>
             )}
           </div>
         )}
 
-        {/* Purpose & Timeline */}
+        {/* --- Purpose & Timeline --- */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className={labelClass}>Purpose</label>
@@ -144,8 +134,8 @@ export default function CreateBuyerPage() {
                 </option>
               ))}
             </select>
-            {(errors.purpose as any)?.message && (
-              <p className={errorClass}>{(errors.purpose as any)?.message}</p>
+            {errors.purpose?.message && (
+              <p className={errorClass}>{errors.purpose.message}</p>
             )}
           </div>
 
@@ -163,13 +153,13 @@ export default function CreateBuyerPage() {
                 </option>
               ))}
             </select>
-            {(errors.timeline as any)?.message && (
-              <p className={errorClass}>{(errors.timeline as any)?.message}</p>
+            {errors.timeline?.message && (
+              <p className={errorClass}>{errors.timeline.message}</p>
             )}
           </div>
         </div>
 
-        {/* Budget Min & Max */}
+        {/* --- Budget Min & Max --- */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className={labelClass}>Budget Min (INR)</label>
@@ -178,8 +168,8 @@ export default function CreateBuyerPage() {
               {...register("budgetMin", { valueAsNumber: true })}
               className={inputClass}
             />
-            {(errors.budgetMin as any)?.message && (
-              <p className={errorClass}>{(errors.budgetMin as any)?.message}</p>
+            {errors.budgetMin?.message && (
+              <p className={errorClass}>{errors.budgetMin.message}</p>
             )}
           </div>
 
@@ -190,13 +180,13 @@ export default function CreateBuyerPage() {
               {...register("budgetMax", { valueAsNumber: true })}
               className={inputClass}
             />
-            {(errors.budgetMax as any)?.message && (
-              <p className={errorClass}>{(errors.budgetMax as any)?.message}</p>
+            {errors.budgetMax?.message && (
+              <p className={errorClass}>{errors.budgetMax.message}</p>
             )}
           </div>
         </div>
 
-        {/* Source */}
+        {/* --- Source --- */}
         <div>
           <label className={labelClass}>Source</label>
           <select {...register("source")} className={inputClass}>
@@ -206,34 +196,38 @@ export default function CreateBuyerPage() {
               </option>
             ))}
           </select>
-          {(errors.source as any)?.message && (
-            <p className={errorClass}>{(errors.source as any)?.message}</p>
+          {errors.source?.message && (
+            <p className={errorClass}>{errors.source.message}</p>
           )}
         </div>
 
-        {/* Notes */}
+        {/* --- Notes --- */}
         <div>
           <label className={labelClass}>Notes</label>
           <textarea {...register("notes")} className={inputClass} rows={3} />
-          {(errors.notes as any)?.message && (
-            <p className={errorClass}>{(errors.notes as any)?.message}</p>
+          {errors.notes?.message && (
+            <p className={errorClass}>{errors.notes.message}</p>
           )}
         </div>
 
-        {/* Tags */}
+        {/* --- Tags --- */}
         <div>
           <label className={labelClass}>Tags (comma-separated)</label>
           <input
-            {...register("tags")}
+            {...register("tags", {
+              setValueAs: (v) =>
+                typeof v === "string"
+                  ? v.split(",").map((t) => t.trim()).filter(Boolean)
+                  : [],
+            })}
             placeholder="e.g. premium, hot lead"
             className={inputClass}
           />
-          {(errors.tags as any)?.message && (
-            <p className={errorClass}>{(errors.tags as any)?.message}</p>
+          {errors.tags?.message && (
+            <p className={errorClass}>{errors.tags.message}</p>
           )}
         </div>
 
-        {/* Submit */}
         <button
           type="submit"
           disabled={isSubmitting}

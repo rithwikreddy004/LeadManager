@@ -108,7 +108,8 @@ export async function GET(req: Request) {
 
 
 
-// POST remains unchanged
+
+// POST – create buyer + initial history
 export async function POST(req: Request) {
   try {
     const data = await req.json();
@@ -118,10 +119,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: parsed.error.format() }, { status: 400 });
     }
 
+    const currentUserId = "demo-user"; // later: replace with real auth user id
+
     const buyer = await prisma.buyer.create({
       data: {
         ...parsed.data,
-        ownerId: "demo-user",
+        ownerId: currentUserId,
+      },
+    });
+
+    // create initial history record (who created & full snapshot)
+    await prisma.buyerHistory.create({
+      data: {
+        buyerId: buyer.id,
+        changedBy: currentUserId,
+        diff: { created: buyer }, // or { created: parsed.data }
       },
     });
 
@@ -131,3 +143,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
   }
 }
+
