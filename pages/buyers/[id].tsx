@@ -8,6 +8,19 @@ type City = "Chandigarh" | "Mohali" | "Zirakpur" | "Panchkula" | "Other";
 type PropertyType = "Apartment" | "Villa" | "Plot" | "Office" | "Retail";
 type Status = "New" | "Qualified" | "Contacted" | "Visited" | "Negotiation" | "Converted" | "Dropped";
 type Timeline = "ZeroToThreeMonths" | "ThreeToSixMonths" | "GreaterThanSixMonths" | "Exploring";
+const timelineMap: Record<string, string> = {
+  ZeroToThreeMonths: "0-3m",
+  ThreeToSixMonths: "3-6m",
+  GreaterThanSixMonths: ">6m",
+  Exploring: "Exploring",
+};
+
+const reverseTimelineMap: Record<string, string> = {
+  "0-3m": "ZeroToThreeMonths",
+  "3-6m": "ThreeToSixMonths",
+  ">6m": "GreaterThanSixMonths",
+  Exploring: "Exploring",
+};
 
 interface Buyer {
   id: string;

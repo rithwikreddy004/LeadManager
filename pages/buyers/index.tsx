@@ -9,6 +9,19 @@ type City = "Chandigarh" | "Mohali" | "Zirakpur" | "Panchkula" | "Other";
 type PropertyType = "Apartment" | "Villa" | "Plot" | "Office" | "Retail";
 type Status = "New" | "Qualified" | "Contacted" | "Visited" | "Negotiation" | "Converted" | "Dropped";
 type Timeline = "ZeroToThreeMonths" | "ThreeToSixMonths" | "GreaterThanSixMonths" | "Exploring";
+const timelineMap: Record<string, string> = {
+  ZeroToThreeMonths: "0-3m",
+  ThreeToSixMonths: "3-6m",
+  GreaterThanSixMonths: ">6m",
+  Exploring: "Exploring",
+};
+
+const reverseTimelineMap: Record<string, string> = {
+  "0-3m": "ZeroToThreeMonths",
+  "3-6m": "ThreeToSixMonths",
+  ">6m": "GreaterThanSixMonths",
+  Exploring: "Exploring",
+};
 
 interface Buyer {
   id: string;
@@ -107,7 +120,8 @@ export default function BuyersPage({ buyers, total, page, pageSize, filters }: B
   const router = useRouter();
   const [search, setSearch] = useState(filters.search || "");
   const [debouncedSearch, setDebouncedSearch] = useState(search);
-
+   // New state for CSV failed rows
+  const [failedRows, setFailedRows] = useState<{ row: number; message: string }[]>([]);
   // Debounce effect: update debouncedSearch 500ms after user stops typing
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedSearch(search), 500);
@@ -147,6 +161,102 @@ export default function BuyersPage({ buyers, total, page, pageSize, filters }: B
           className="w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
         />
       </div>
+
+      {/* CSV Import */}
+      <div className="mb-4">
+        <label className="block text-gray-700 font-medium mb-2">Import Buyers CSV (max 200 rows)</label>
+        <input
+          type="file"
+          accept=".csv"
+          onChange={async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+
+            const text = await file.text();
+            const res = await fetch("/api/buyers/import", {
+              method: "POST",
+              headers: { "Content-Type": "text/csv" },
+              body: text,
+            });
+
+            const data = await res.json();
+            if (res.status === 400) {
+              console.log("Errors:", data.errors);
+              alert(`CSV Import failed. See console for errors.`);
+            }
+             else if (res.status === 207) {
+                  setFailedRows(data.errors); // capture partial failures
+                  alert(
+                    `✅ ${data.inserted} buyers imported.\n⚠️ ${data.errors.length} rows failed – see error table below.`
+                  );
+                  router.replace(router.asPath);
+              } // refresh list
+             else if (res.ok) {
+              alert(`${data.inserted} buyers imported successfully!`);
+              router.replace(router.asPath); // refresh list
+            }
+           
+          }}
+          className="border border-gray-300 rounded px-3 py-2"
+        />
+      </div>
+
+
+      {/* Show CSV failed rows if any */}
+      {failedRows.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold text-red-600 mb-2">CSV Errors</h2>
+          <div className="overflow-x-auto shadow rounded bg-white">
+            <table className="min-w-full border border-gray-200">
+              <thead className="bg-red-100">
+                <tr>
+                  <th className="px-4 py-2 border-b border-gray-200 text-left">Row #</th>
+                  <th className="px-4 py-2 border-b border-gray-200 text-left">Error Message</th>
+                </tr>
+              </thead>
+              <tbody>
+                {failedRows.map((f) => (
+                  <tr key={f.row} className="hover:bg-red-50">
+                    <td className="px-4 py-2 border-b border-gray-200">{f.row}</td>
+                    <td className="px-4 py-2 border-b border-gray-200">{f.message}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+
+
+      {/* CSV Export */}
+      <div className="mb-4">
+        <button
+          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+          onClick={async () => {
+            // Include current filters/search in export
+            const query = new URLSearchParams(router.query as Record<string, string>).toString();
+            const res = await fetch(`/api/buyers/export?${query}`);
+            if (!res.ok) {
+              alert("Failed to export CSV");
+              return;
+            }
+
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `buyers_export_${Date.now()}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+          }}
+        >
+          Export CSV
+        </button>
+      </div>
+
+
+
 
       <div className="overflow-x-auto shadow-lg rounded-lg bg-white">
         <table className="min-w-full border border-gray-200 border-collapse">
