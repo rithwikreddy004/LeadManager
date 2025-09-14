@@ -1,26 +1,23 @@
-import { GetServerSideProps } from "next";
-import { PrismaClient } from "@prisma/client";
-import { useState } from "react";
+"use client";
 
-const prisma = new PrismaClient();
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
 
 type City = "Chandigarh" | "Mohali" | "Zirakpur" | "Panchkula" | "Other";
 type PropertyType = "Apartment" | "Villa" | "Plot" | "Office" | "Retail";
-type Status = "New" | "Qualified" | "Contacted" | "Visited" | "Negotiation" | "Converted" | "Dropped";
-type Timeline = "ZeroToThreeMonths" | "ThreeToSixMonths" | "GreaterThanSixMonths" | "Exploring";
-const timelineMap: Record<string, string> = {
-  ZeroToThreeMonths: "0-3m",
-  ThreeToSixMonths: "3-6m",
-  GreaterThanSixMonths: ">6m",
-  Exploring: "Exploring",
-};
-
-const reverseTimelineMap: Record<string, string> = {
-  "0-3m": "ZeroToThreeMonths",
-  "3-6m": "ThreeToSixMonths",
-  ">6m": "GreaterThanSixMonths",
-  Exploring: "Exploring",
-};
+type Status =
+  | "New"
+  | "Qualified"
+  | "Contacted"
+  | "Visited"
+  | "Negotiation"
+  | "Converted"
+  | "Dropped";
+type Timeline =
+  | "ZeroToThreeMonths"
+  | "ThreeToSixMonths"
+  | "GreaterThanSixMonths"
+  | "Exploring";
 
 interface Buyer {
   id: string;
@@ -46,72 +43,76 @@ interface BuyerHistory {
   id: string;
   buyerId: string;
   changedBy: string;
-  changedAt: string; // ISO string
+  changedAt: string;
   diff: Record<string, { old: any; new: any }>;
 }
 
-interface BuyerPageProps {
-  buyer: Buyer;
-  history: BuyerHistory[];
-}
+export default function BuyerPage() {
+  const { id } = useParams();
+  const router = useRouter();
 
-export const getServerSideProps: GetServerSideProps<BuyerPageProps> = async (ctx) => {
-  const id = ctx.params?.id as string;
-
-  const buyer = await prisma.buyer.findUnique({ where: { id } });
-  if (!buyer) return { notFound: true };
-
-  const history = await prisma.buyerHistory.findMany({
-    where: { buyerId: id },
-    orderBy: { changedAt: "desc" },
-    take: 5,
-  });
-
-  return {
-    props: {
-      buyer: { ...buyer, updatedAt: buyer.updatedAt.toISOString() },
-      history: history.map((h) => ({
-        ...h,
-        changedAt: h.changedAt.toISOString(),
-        diff: (h.diff as Record<string, { old: any; new: any }>) ?? {},
-      })),
-    },
-  };
-};
-
-export default function BuyerPage({ buyer, history }: BuyerPageProps) {
-  const [formData, setFormData] = useState({ ...buyer });
+  const [buyer, setBuyer] = useState<Buyer | null>(null);
+  const [formData, setFormData] = useState<Buyer | null>(null);
+  const [history, setHistory] = useState<BuyerHistory[]>([]);
   const [message, setMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch buyer + history on mount
+  useEffect(() => {
+    async function fetchBuyer() {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/buyers/${id}`);
+        if (!res.ok) throw new Error("Buyer not found");
+        const data = await res.json();
+        setBuyer(data.buyer);
+        setFormData(data.buyer);
+        setHistory(data.history || []);
+      } catch (err) {
+        console.error(err);
+        setMessage("Buyer not found or error fetching data");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchBuyer();
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage(null);
+    if (!formData) return;
 
+    setMessage(null);
     try {
-        const res = await fetch(`/api/buyers/${buyer.id}`, {
+      const res = await fetch(`/api/buyers/${id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-        });
+      });
 
-        if (res.status === 409) {
+      if (res.status === 409) {
         setMessage("Record changed by someone else. Please refresh and try again.");
         return;
-        }
-
-        if (!res.ok) {
+      }
+      if (!res.ok) {
         const errorData = await res.json().catch(() => null);
         setMessage(errorData?.message || "Something went wrong. Try again.");
         return;
-        }
+      }
 
-        setMessage("Buyer updated successfully!");
+      const updated = await res.json();
+      setBuyer(updated.buyer);
+      setFormData(updated.buyer);
+      setHistory(updated.history);
+      setMessage("Buyer updated successfully!");
     } catch (err) {
-        console.error(err);
-        setMessage("Network error. Please try again.");
+      console.error(err);
+      setMessage("Network error. Please try again.");
     }
-};
+  };
 
+  if (loading) return <div className="p-6 text-gray-600">Loading...</div>;
+  if (!buyer || !formData) return <div className="p-6 text-red-600">Buyer not found</div>;
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -119,8 +120,7 @@ export default function BuyerPage({ buyer, history }: BuyerPageProps) {
       {message && <p className="mb-4 text-red-600">{message}</p>}
 
       <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-6 space-y-4">
-
-        <input type="hidden" name="updatedAt" value={formData.updatedAt} />
+        <input type="hidden" value={formData.updatedAt} />
 
         {/* Full Name */}
         <div>
@@ -134,17 +134,6 @@ export default function BuyerPage({ buyer, history }: BuyerPageProps) {
           />
         </div>
 
-        {/* Email */}
-        <div>
-          <label className="block text-gray-700 font-medium">Email</label>
-          <input
-            type="email"
-            className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
-            value={formData.email || ""}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          />
-        </div>
-
         {/* Phone */}
         <div>
           <label className="block text-gray-700 font-medium">Phone</label>
@@ -154,6 +143,17 @@ export default function BuyerPage({ buyer, history }: BuyerPageProps) {
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
             required
+          />
+        </div>
+
+        {/* Email */}
+        <div>
+          <label className="block text-gray-700 font-medium">Email</label>
+          <input
+            type="email"
+            className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
+            value={formData.email || ""}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           />
         </div>
 
@@ -193,84 +193,6 @@ export default function BuyerPage({ buyer, history }: BuyerPageProps) {
           </select>
         </div>
 
-        {/* BHK */}
-        <div>
-          <label className="block text-gray-700 font-medium">BHK</label>
-          <input
-            type="text"
-            className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
-            value={formData.bhk || ""}
-            onChange={(e) => setFormData({ ...formData, bhk: e.target.value })}
-          />
-        </div>
-
-        {/* Purpose */}
-        <div>
-          <label className="block text-gray-700 font-medium">Purpose</label>
-          <select
-            className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
-            value={formData.purpose}
-            onChange={(e) => setFormData({ ...formData, purpose: e.target.value as "Buy" | "Rent" })}
-            required
-          >
-            <option value="Buy">Buy</option>
-            <option value="Rent">Rent</option>
-          </select>
-        </div>
-
-        {/* Budget Min/Max */}
-        <div className="flex gap-2">
-          <div className="flex-1">
-            <label className="block text-gray-700 font-medium">Budget Min</label>
-            <input
-              type="number"
-              className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
-              value={formData.budgetMin ?? ""}
-              onChange={(e) => setFormData({ ...formData, budgetMin: Number(e.target.value) })}
-              min={0}
-            />
-          </div>
-          <div className="flex-1">
-            <label className="block text-gray-700 font-medium">Budget Max</label>
-            <input
-              type="number"
-              className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
-              value={formData.budgetMax ?? ""}
-              onChange={(e) => setFormData({ ...formData, budgetMax: Number(e.target.value) })}
-              min={0}
-            />
-          </div>
-        </div>
-
-        {/* Timeline */}
-        <div>
-          <label className="block text-gray-700 font-medium">Timeline</label>
-          <select
-            className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
-            value={formData.timeline}
-            onChange={(e) => setFormData({ ...formData, timeline: e.target.value as Timeline })}
-            required
-          >
-            <option value="">Select timeline</option>
-            <option value="ZeroToThreeMonths">0-3 Months</option>
-            <option value="ThreeToSixMonths">3-6 Months</option>
-            <option value="GreaterThanSixMonths">gt6 Months</option>
-            <option value="Exploring">Exploring</option>
-          </select>
-        </div>
-
-        {/* Source */}
-        <div>
-          <label className="block text-gray-700 font-medium">Source</label>
-          <input
-            type="text"
-            className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
-            value={formData.source}
-            onChange={(e) => setFormData({ ...formData, source: e.target.value })}
-            required
-          />
-        </div>
-
         {/* Status */}
         <div>
           <label className="block text-gray-700 font-medium">Status</label>
@@ -291,12 +213,51 @@ export default function BuyerPage({ buyer, history }: BuyerPageProps) {
           </select>
         </div>
 
+        {/* Timeline */}
+        <div>
+          <label className="block text-gray-700 font-medium">Timeline</label>
+          <select
+            className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
+            value={formData.timeline}
+            onChange={(e) => setFormData({ ...formData, timeline: e.target.value as Timeline })}
+            required
+          >
+            <option value="">Select timeline</option>
+            <option value="ZeroToThreeMonths">0-3 Months</option>
+            <option value="ThreeToSixMonths">3-6 Months</option>
+            <option value="GreaterThanSixMonths">6+ Months</option>
+            <option value="Exploring">Exploring</option>
+          </select>
+        </div>
+
+        {/* Budget */}
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <label className="block text-gray-700 font-medium">Budget Min</label>
+            <input
+              type="number"
+              className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
+              value={formData.budgetMin ?? ""}
+              onChange={(e) => setFormData({ ...formData, budgetMin: Number(e.target.value) })}
+            />
+          </div>
+          <div className="flex-1">
+            <label className="block text-gray-700 font-medium">Budget Max</label>
+            <input
+              type="number"
+              className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
+              value={formData.budgetMax ?? ""}
+              onChange={(e) => setFormData({ ...formData, budgetMax: Number(e.target.value) })}
+            />
+          </div>
+        </div>
+
         {/* Notes */}
         <div>
           <label className="block text-gray-700 font-medium">Notes</label>
           <textarea
             className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
-            value={formData.notes || ""}
+            value={formData.notes ?? ""}
             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
           />
         </div>
@@ -307,20 +268,14 @@ export default function BuyerPage({ buyer, history }: BuyerPageProps) {
           <input
             type="text"
             className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
-            value={formData.tags?.join(", ") || ""}
+            value={formData.tags?.join(", ") ?? ""}
             onChange={(e) =>
-              setFormData({
-                ...formData,
-                tags: e.target.value.split(",").map((t) => t.trim()),
-              })
+              setFormData({ ...formData, tags: e.target.value.split(",").map((t) => t.trim()) })
             }
           />
         </div>
 
-        <button
-          type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-        >
+        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
           Save
         </button>
       </form>
@@ -346,4 +301,3 @@ export default function BuyerPage({ buyer, history }: BuyerPageProps) {
     </div>
   );
 }
-

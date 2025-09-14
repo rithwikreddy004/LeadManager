@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { buyerSchema } from "@/schemas/buyer";
+import { buyerSchema } from "../../schemas/buyer";
 
 export default function CreateBuyerPage() {
   const {
@@ -24,17 +24,25 @@ export default function CreateBuyerPage() {
         body: JSON.stringify(data),
       });
 
+      const resData = await res.json();
+
       if (!res.ok) {
-        console.error("Server error:", await res.json());
+        if (res.status === 401) {
+          alert("You are not logged in! Please login first.");
+          window.location.href = "/login"; // optional: redirect
+        } else {
+          alert("Error: " + (resData.error || "Something went wrong"));
+        }
         return;
       }
 
       alert("Buyer created successfully!");
     } catch (err) {
       console.error(err);
-      alert("Something went wrong!");
+      alert("Network error. Please try again.");
     }
   };
+
 
   const inputClass =
     "w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500";

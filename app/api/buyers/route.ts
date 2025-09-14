@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
+import { getCurrentUser } from "../login/auth"; 
 
 const prisma = new PrismaClient();
 
@@ -113,18 +114,22 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const data = await req.json();
+    const currentUser = await getCurrentUser(); // ✅ get logged-in demo use
+    if (!currentUser) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const parsed = buyerSchema.safeParse(data);
 
     if (!parsed.success) {
       return NextResponse.json({ error: parsed.error.format() }, { status: 400 });
     }
 
-    const currentUserId = "demo-user"; // later: replace with real auth user id
+    //const currentUserId = "demo-user"; // later: replace with real auth user id
 
     const buyer = await prisma.buyer.create({
       data: {
         ...parsed.data,
-        ownerId: currentUserId,
+        ownerId: currentUser.id,
       },
     });
 
@@ -132,7 +137,7 @@ export async function POST(req: Request) {
     await prisma.buyerHistory.create({
       data: {
         buyerId: buyer.id,
-        changedBy: currentUserId,
+        changedBy: currentUser.id,
         diff: { created: buyer }, // or { created: parsed.data }
       },
     });

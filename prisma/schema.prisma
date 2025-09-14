@@ -37,6 +37,9 @@ model BuyerHistory {
   diff      Json
 }
 
+
+
+
 enum City {
   Chandigarh
   Mohali
