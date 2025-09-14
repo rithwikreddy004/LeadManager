@@ -122,7 +122,7 @@ export default function BuyerPage() {
       <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-6 space-y-4">
         <input type="hidden" value={formData.updatedAt} />
 
-        {/* Full Name */}
+        
         <div>
           <label className="block text-gray-700 font-medium">Full Name</label>
           <input
@@ -134,7 +134,7 @@ export default function BuyerPage() {
           />
         </div>
 
-        {/* Phone */}
+        
         <div>
           <label className="block text-gray-700 font-medium">Phone</label>
           <input
@@ -146,7 +146,7 @@ export default function BuyerPage() {
           />
         </div>
 
-        {/* Email */}
+        
         <div>
           <label className="block text-gray-700 font-medium">Email</label>
           <input
@@ -157,7 +157,7 @@ export default function BuyerPage() {
           />
         </div>
 
-        {/* City */}
+        
         <div>
           <label className="block text-gray-700 font-medium">City</label>
           <select
@@ -175,7 +175,7 @@ export default function BuyerPage() {
           </select>
         </div>
 
-        {/* Property Type */}
+        
         <div>
           <label className="block text-gray-700 font-medium">Property Type</label>
           <select
@@ -193,7 +193,7 @@ export default function BuyerPage() {
           </select>
         </div>
 
-        {/* Status */}
+        
         <div>
           <label className="block text-gray-700 font-medium">Status</label>
           <select
@@ -213,7 +213,7 @@ export default function BuyerPage() {
           </select>
         </div>
 
-        {/* Timeline */}
+        
         <div>
           <label className="block text-gray-700 font-medium">Timeline</label>
           <select
@@ -230,7 +230,7 @@ export default function BuyerPage() {
           </select>
         </div>
 
-        {/* Budget */}
+        
         <div className="flex gap-2">
           <div className="flex-1">
             <label className="block text-gray-700 font-medium">Budget Min</label>
@@ -252,7 +252,7 @@ export default function BuyerPage() {
           </div>
         </div>
 
-        {/* Notes */}
+        
         <div>
           <label className="block text-gray-700 font-medium">Notes</label>
           <textarea
@@ -262,7 +262,7 @@ export default function BuyerPage() {
           />
         </div>
 
-        {/* Tags */}
+        
         <div>
           <label className="block text-gray-700 font-medium">Tags</label>
           <input
@@ -280,7 +280,7 @@ export default function BuyerPage() {
         </button>
       </form>
 
-      {/* History */}
+      
       <h2 className="text-2xl font-bold mt-8 mb-4 text-gray-800">Last 5 Changes</h2>
       <div className="bg-white shadow rounded-lg p-4">
         {history.length === 0 ? (

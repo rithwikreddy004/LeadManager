@@ -9,7 +9,7 @@ export const buyerSchema = z
       .string()
       .email("Invalid email")
       .optional()
-      .or(z.literal("")), // allow empty string
+      .or(z.literal("")), 
     phone: z
       .string()
       .regex(/^\d{10,15}$/, "Phone must be 10–15 digits"),
@@ -40,7 +40,7 @@ export const buyerSchema = z
     notes: z.string().max(1000).optional(),
     tags: z.array(z.string()).optional(),
   })
-  // --- Cross-field validations ---
+  
   .refine(
     (data) =>
       data.budgetMin == null ||

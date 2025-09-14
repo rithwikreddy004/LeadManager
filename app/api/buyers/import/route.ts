@@ -42,7 +42,7 @@ export async function POST(req: Request) {
 
     // Validate each row using buyerSchema
     for (let idx = 0; idx < rows.length; idx++) {
-      const rowNum = idx + 2; // CSV header row = 1
+      const rowNum = idx + 2; 
       const row = rows[idx];
 
       // Transform CSV fields

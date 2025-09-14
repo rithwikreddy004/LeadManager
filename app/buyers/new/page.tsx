@@ -54,7 +54,7 @@ export default function CreateBuyerPage() {
       <h1 className="text-3xl font-bold mb-6 text-gray-800">Create Buyer Lead</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* --- Full Name --- */}
+        
         <div>
           <label className={labelClass}>Full Name</label>
           <input {...register("fullName")} className={inputClass} />
@@ -63,7 +63,7 @@ export default function CreateBuyerPage() {
           )}
         </div>
 
-        {/* --- Email --- */}
+        
         <div>
           <label className={labelClass}>Email</label>
           <input {...register("email")} className={inputClass} />
@@ -72,7 +72,7 @@ export default function CreateBuyerPage() {
           )}
         </div>
 
-        {/* --- Phone --- */}
+        
         <div>
           <label className={labelClass}>Phone</label>
           <input {...register("phone")} className={inputClass} />
@@ -81,7 +81,7 @@ export default function CreateBuyerPage() {
           )}
         </div>
 
-        {/* --- City & Property Type --- */}
+        
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className={labelClass}>City</label>
@@ -114,7 +114,7 @@ export default function CreateBuyerPage() {
           </div>
         </div>
 
-        {/* --- Conditional BHK --- */}
+        
         {["Apartment", "Villa"].includes(propertyType) && (
           <div>
             <label className={labelClass}>BHK</label>
@@ -131,7 +131,7 @@ export default function CreateBuyerPage() {
           </div>
         )}
 
-        {/* --- Purpose & Timeline --- */}
+        
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className={labelClass}>Purpose</label>
@@ -167,7 +167,7 @@ export default function CreateBuyerPage() {
           </div>
         </div>
 
-        {/* --- Budget Min & Max --- */}
+        
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className={labelClass}>Budget Min (INR)</label>
@@ -194,7 +194,7 @@ export default function CreateBuyerPage() {
           </div>
         </div>
 
-        {/* --- Source --- */}
+        
         <div>
           <label className={labelClass}>Source</label>
           <select {...register("source")} className={inputClass}>
@@ -209,7 +209,7 @@ export default function CreateBuyerPage() {
           )}
         </div>
 
-        {/* --- Notes --- */}
+        
         <div>
           <label className={labelClass}>Notes</label>
           <textarea {...register("notes")} className={inputClass} rows={3} />
@@ -218,7 +218,7 @@ export default function CreateBuyerPage() {
           )}
         </div>
 
-        {/* --- Tags --- */}
+        
         <div>
           <label className={labelClass}>Tags (comma-separated)</label>
           <input

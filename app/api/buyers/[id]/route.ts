@@ -5,7 +5,7 @@ import { getCurrentUser } from "@/app/api/login/auth";
 
 const prisma = new PrismaClient();
 
-// ------------------ GET Handler ------------------
+
 export async function GET(req: NextRequest) {
   const currentUser = await getCurrentUser();
   if (!currentUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
   });
 }
 
-// ------------------ POST Handler ------------------
+
 export async function POST(req: NextRequest) {
   const currentUser = await getCurrentUser();
   if (!currentUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  // Log to buyerHistory if any changes
+  
   if (Object.keys(diff).length > 0) {
     await prisma.buyerHistory.create({
       data: {
@@ -124,7 +124,7 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // Return updated buyer + latest history
+  
   const history = await prisma.buyerHistory.findMany({
     where: { buyerId: id },
     orderBy: { changedAt: "desc" },

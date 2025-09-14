@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
-      {/* Navbar */}
+
       <nav className="flex items-center justify-between px-8 py-4 bg-gray-900 shadow-md">
         <div className="text-2xl font-bold">LeadManager</div>
         <div className="space-x-6">
@@ -24,14 +24,12 @@ export default function HomePage() {
         </div>
       </nav>
 
-      {/* Hero / Main Section */}
       <main className="flex-1 flex flex-col justify-center items-center text-center px-6 md:px-0">
         <h1 className="text-5xl md:text-6xl font-extrabold mb-6">Welcome to LeadManager</h1>
         <p className="text-lg md:text-xl mb-8 max-w-xl">
           Efficiently manage your buyer leads, track statuses, and quickly create or edit leads.
         </p>
 
-        {/* Quick Links */}
         <div className="flex flex-col md:flex-row gap-4">
           <Link
             href="/buyers/new"
@@ -48,7 +46,6 @@ export default function HomePage() {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="bg-gray-900 py-6 mt-auto text-center text-gray-400">
         &copy; {new Date().getFullYear()} LeadManager. All rights reserved.
       </footer>

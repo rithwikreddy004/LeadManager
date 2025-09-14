@@ -63,7 +63,7 @@ export default function BuyersPage() {
   }, [search]);
 
   // Fetch buyers whenever filters/search/page changes
-  // Fetch buyers whenever filters/search/page changes
+  
 useEffect(() => {
   const fetchBuyers = async () => {
     try {
@@ -128,7 +128,7 @@ useEffect(() => {
             className="px-3 py-2 border border-gray-300 rounded"
           >
             <option value="">{key}</option>
-            {/* You can populate options dynamically if needed */}
+            
           </select>
         ))}
       </div>

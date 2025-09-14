@@ -5,7 +5,7 @@ import { getCurrentUser } from "../login/auth";
 
 const prisma = new PrismaClient();
 
-// Zod schema remains unchanged
+
 const buyerSchema = z.object({
   fullName: z.string().min(2).max(80),
   email: z.string().email().optional().or(z.literal("")),
@@ -38,7 +38,7 @@ const buyerSchema = z.object({
   tags: z.array(z.string()).optional(),
 });
 
-// ✅ Enhanced GET with pagination, filters, flexible search
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -114,7 +114,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const data = await req.json();
-    const currentUser = await getCurrentUser(); // ✅ get logged-in demo use
+    const currentUser = await getCurrentUser(); 
     if (!currentUser) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -124,7 +124,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: parsed.error.format() }, { status: 400 });
     }
 
-    //const currentUserId = "demo-user"; // later: replace with real auth user id
+    
 
     const buyer = await prisma.buyer.create({
       data: {
