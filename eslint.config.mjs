@@ -28,8 +28,8 @@ const eslintConfig = [
   {
     ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts"],
     rules: {
-      "@typescript-eslint/no-explicit-any": "off", // 👈 disable the rule
-      "@typescript-eslint/no-unused-vars": "warn", // 👈 optional: turn unused vars into warnings
+      "@typescript-eslint/no-explicit-any": "off", 
+      "@typescript-eslint/no-unused-vars": "warn", 
     },
   },
 ];
