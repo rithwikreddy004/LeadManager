@@ -1,26 +1,33 @@
+
+
+
+
 "use client";
+
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useAuth } from "./context/authcontext";
 
 export default function Navbar() {
+  const { loggedIn, logout } = useAuth();
+
+  
+
   return (
     <>
       <nav className="navbar">
         <div className="logo">LeadManager</div>
         <div className="links">
-          {/*
-          <Link href="/">Home</Link>
-          <Link href="/buyers/new">Create Lead</Link>
-          <Link href="/buyers/index">View Leads</Link>
-          <Link href="/login">Login</Link>*/}
-
-
           <Link href="/" style={{ color: "#fff", textDecoration: "none" }}>Home</Link>
-
           <Link href="/buyers/new" style={{ color: "#fff", textDecoration: "none" }}>Create Lead</Link>
-
           <Link href="/buyers/index" style={{ color: "#fff", textDecoration: "none" }}>View Leads</Link>
 
+
+          {loggedIn ? (
+          <button onClick={logout} className="logout-btn">Logout</button>
+        ) : (
           <Link href="/login" style={{ color: "#fff", textDecoration: "none" }}>Login</Link>
+        )}
         </div>
       </nav>
 
@@ -49,12 +56,16 @@ export default function Navbar() {
           gap: 2rem;
         }
 
-        .links a {
-          color: #fff !important;       /* Force white */
-          text-decoration: none !important; /* Remove default underline */
+        .links a,
+        .links .logout-btn {
+          color: #fff !important;
+          text-decoration: none !important;
           font-weight: 500;
           position: relative;
           padding: 0.5rem 0;
+          background: none;
+          border: none;
+          cursor: pointer;
           transition: color 0.3s;
         }
 
@@ -69,12 +80,13 @@ export default function Navbar() {
           transition: width 0.3s;
         }
 
-        .links a:hover {
-          color: #60a5fa !important; /* hover color */
-        }
-
         .links a:hover::after {
           width: 100%;
+        }
+
+        .links a:hover,
+        .links .logout-btn:hover {
+          color: #60a5fa !important;
         }
       `}</style>
     </>

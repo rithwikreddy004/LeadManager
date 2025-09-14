@@ -3,11 +3,13 @@
 
 import { useState } from "react";
 import Navbar from "../globalnavbar";
+import { useAuth } from "../context/authcontext";
 
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useAuth();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,8 +27,9 @@ export default function LoginPage() {
         return;
       }
 
-      alert("Logged in successfully!");
-      window.location.href = "/";
+      const data = await res.json();
+      login(data.token); // Update context immediately
+      window.location.href = "/"; // redirect to homepage
     } catch (err) {
       console.error(err);
       alert("Something went wrong!");
