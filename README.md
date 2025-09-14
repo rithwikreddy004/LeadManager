@@ -63,8 +63,6 @@ buyers
 
 buyer_history
 
-users
-
 Or run Prisma migrations directly:
 
 npx prisma migrate dev --name init
