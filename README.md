@@ -32,7 +32,7 @@
 
 Setup (Run Locally)
 1. Clone the repository
-git clone https://github.com/yourusername/buyer-lead-app.git
+git clone https://github.com/rithwikreddy004/buyer-lead-app.git
 cd buyer-lead-app
 
 2. Install dependencies
@@ -157,22 +157,22 @@ Full-text search across multiple fields
 
 ## **Screenshots**
 
-*Add screenshots here to show the UI and flows:*
-![Landing Page](#)
+
+![Landing Page](#)#Landing Page
 <img width="1915" height="865" alt="Screenshot 2025-09-14 202157" src="https://github.com/user-attachments/assets/d2192ec9-3dcd-40b3-9754-9e8c11a971cc" />
 
 
-![Create Lead](#)
+![Create Lead](#)#Create Lead
 <img width="1883" height="859" alt="Screenshot 2025-09-14 202244" src="https://github.com/user-attachments/assets/10580676-a479-405c-b6cf-221b372698f9" />
 
 
-![Buyer List](#)
+![Buyer List](#)#Buyer List
 <img width="1895" height="841" alt="Screenshot 2025-09-14 202404" src="https://github.com/user-attachments/assets/6ca72a06-c0e1-4c8b-97ae-3d186fedd704" />
 
-![CSV Import with row wise errors if any](#)
+![CSV Import with row wise errors if any](#)#CSV Import 
 <img width="1883" height="857" alt="Screenshot 2025-09-14 202648" src="https://github.com/user-attachments/assets/8f9e253b-5271-459f-8237-fc8e38cf907f" />
 
-![Edit Lead](#)
+![Edit Lead](#)#Edit Lead
 <img width="1874" height="840" alt="Screenshot 2025-09-14 202734" src="https://github.com/user-attachments/assets/d8e12830-19bc-454b-bbe3-94f0a1fbc954" />
 
 
