@@ -1,0 +1,128 @@
+/* app/styles/homepage.css */
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #000;
+  color: #fff;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #111;
+  border-bottom: 1px solid #444;
+
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+nav .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: -0.5px;
+}
+
+nav .links {
+  display: flex;
+  gap: 2rem;
+}
+
+nav .links a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  padding: 0.5rem 0;
+  transition: color 0.3s;
+}
+
+nav .links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background-color: #3b82f6; /* blue-400 */
+  transition: width 0.3s;
+}
+
+nav .links a:hover {
+  color: #60a5fa; /* blue-300 */
+}
+
+nav .links a:hover::after {
+  width: 100%;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+main h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+}
+
+main p {
+  font-size: 1.125rem;
+  max-width: 40rem;
+  margin-bottom: 2rem;
+}
+
+.main-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.main-buttons a {
+  text-decoration: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  transition: background-color 0.3s;
+  text-align: center;
+}
+
+.main-buttons a.create {
+  background-color: #2563eb; /* blue-600 */
+  color: #fff;
+}
+
+.main-buttons a.create:hover {
+  background-color: #1d4ed8; /* blue-700 */
+}
+
+.main-buttons a.view {
+  background-color: #374151; /* gray-700 */
+  color: #fff;
+}
+
+.main-buttons a.view:hover {
+  background-color: #4b5563; /* gray-600 */
+}
+
+footer {
+  background-color: #111;
+  padding: 1.5rem;
+  text-align: center;
+  color: #9ca3af; /* gray-400 */
+}

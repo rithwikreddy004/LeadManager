@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import Navbar from "../../globalnavbar";
+
 type City = "Chandigarh" | "Mohali" | "Zirakpur" | "Panchkula" | "Other";
 type PropertyType = "Apartment" | "Villa" | "Plot" | "Office" | "Retail";
 type Status =
@@ -38,8 +40,6 @@ interface Buyer {
 
 export default function BuyersPage() {
   const router = useRouter();
-
-  // Filters & search
   const [buyers, setBuyers] = useState<Buyer[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -52,8 +52,6 @@ export default function BuyersPage() {
     status: "",
     timeline: "",
   });
-
-  // CSV failed rows
   const [failedRows, setFailedRows] = useState<{ row: number; message: string }[]>([]);
 
   // Debounce search
@@ -62,80 +60,74 @@ export default function BuyersPage() {
     return () => clearTimeout(handler);
   }, [search]);
 
-  // Fetch buyers whenever filters/search/page changes
-  
-useEffect(() => {
-  const fetchBuyers = async () => {
-    try {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        search: debouncedSearch || "",
-        ...filters,
-      });
+  // Fetch buyers
+  useEffect(() => {
+    const fetchBuyers = async () => {
+      try {
+        const params = new URLSearchParams({
+          page: page.toString(),
+          search: debouncedSearch || "",
+          ...filters,
+        });
 
-      const res = await fetch(`/api/buyers?${params.toString()}`);
+        const res = await fetch(`/api/buyers?${params.toString()}`);
 
-      if (res.status === 401) {
-        alert("Please login first!");
-        router.push("/login"); // redirect to login page
-        return;
+        if (res.status === 401) {
+          alert("Please login first!");
+          router.push("/login");
+          return;
+        }
+
+        if (!res.ok) {
+          console.error("Failed to fetch buyers:", await res.text());
+          return;
+        }
+
+        const data = await res.json();
+        setBuyers(data.buyers || []);
+        setTotal(data.total || 0);
+      } catch (error) {
+        console.error("Error fetching buyers:", error);
       }
+    };
 
-      if (!res.ok) {
-        console.error("Failed to fetch buyers:", await res.text());
-        return;
-      }
-
-      const data = await res.json();
-      setBuyers(data.buyers || []);
-      setTotal(data.total || 0);
-    } catch (error) {
-      console.error("Error fetching buyers:", error);
-    }
-  };
-
-  fetchBuyers();
-}, [debouncedSearch, filters, page, router]);
-
+    fetchBuyers();
+  }, [debouncedSearch, filters, page, router]);
 
   const handleFilterChange = (key: keyof typeof filters, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
-    setPage(1); // reset page when filter changes
+    setPage(1);
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-4 text-gray-800">Buyer Leads</h1>
+    <>
+    <Navbar/>
+    <div className="buyers-page">
+      <h1>Buyer Leads</h1>
 
-      {/* Search Input */}
-      <div className="mb-4">
+      <div className="search-container">
         <input
           type="text"
           placeholder="Search by Name, Phone, or Email..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
       </div>
 
-      {/* Filters */}
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="filters-container">
         {["city", "propertyType", "status", "timeline"].map((key) => (
           <select
             key={key}
             value={(filters as any)[key]}
             onChange={(e) => handleFilterChange(key as any, e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded"
           >
             <option value="">{key}</option>
-            
           </select>
         ))}
       </div>
 
-      {/* CSV Import */}
-      <div className="mb-4">
-        <label className="block text-gray-700 font-medium mb-2">Import Buyers CSV (max 200 rows)</label>
+      <div className="csv-import">
+        <label>Import Buyers CSV (max 200 rows)</label>
         <input
           type="file"
           accept=".csv"
@@ -157,33 +149,31 @@ useEffect(() => {
             } else if (res.status === 207) {
               setFailedRows(data.errors);
               alert(`✅ ${data.inserted} buyers imported. ⚠️ ${data.errors.length} rows failed.`);
-              setPage(1); // refresh
+              setPage(1);
             } else if (res.ok) {
               alert(`${data.inserted} buyers imported successfully!`);
               setPage(1);
             }
           }}
-          className="border border-gray-300 rounded px-3 py-2"
         />
       </div>
 
-      {/* CSV Errors */}
       {failedRows.length > 0 && (
-        <div className="mb-4">
-          <h2 className="text-xl font-semibold text-red-600 mb-2">CSV Errors</h2>
-          <div className="overflow-x-auto shadow rounded bg-white">
-            <table className="min-w-full border border-gray-200">
-              <thead className="bg-red-100">
+        <div className="csv-errors">
+          <h2>CSV Errors</h2>
+          <div className="table-container">
+            <table>
+              <thead>
                 <tr>
-                  <th className="px-4 py-2 border-b border-gray-200 text-left">Row #</th>
-                  <th className="px-4 py-2 border-b border-gray-200 text-left">Error Message</th>
+                  <th>Row #</th>
+                  <th>Error Message</th>
                 </tr>
               </thead>
               <tbody>
                 {failedRows.map((f) => (
-                  <tr key={f.row} className="hover:bg-red-50">
-                    <td className="px-4 py-2 border-b border-gray-200">{f.row}</td>
-                    <td className="px-4 py-2 border-b border-gray-200">{f.message}</td>
+                  <tr key={f.row}>
+                    <td>{f.row}</td>
+                    <td>{f.message}</td>
                   </tr>
                 ))}
               </tbody>
@@ -192,10 +182,8 @@ useEffect(() => {
         </div>
       )}
 
-      {/* CSV Export */}
-      <div className="mb-4">
+      <div className="csv-export">
         <button
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
           onClick={async () => {
             const params = new URLSearchParams({
               page: page.toString(),
@@ -218,44 +206,39 @@ useEffect(() => {
         </button>
       </div>
 
-      {/* Buyers Table */}
-      <div className="overflow-x-auto shadow-lg rounded-lg bg-white">
-        <table className="min-w-full border border-gray-200 border-collapse">
-          <thead className="bg-gray-100">
+      <div className="table-container">
+        <table>
+          <thead>
             <tr>
-              <th className="px-4 py-3 border-b border-gray-200">Name</th>
-              <th className="px-4 py-3 border-b border-gray-200">Phone</th>
-              <th className="px-4 py-3 border-b border-gray-200">City</th>
-              <th className="px-4 py-3 border-b border-gray-200">Property Type</th>
-              <th className="px-4 py-3 border-b border-gray-200">Budget</th>
-              <th className="px-4 py-3 border-b border-gray-200">Timeline</th>
-              <th className="px-4 py-3 border-b border-gray-200">Status</th>
-              <th className="px-4 py-3 border-b border-gray-200">Updated</th>
-              <th className="px-4 py-3 border-b border-gray-200"></th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>City</th>
+              <th>Property Type</th>
+              <th>Budget</th>
+              <th>Timeline</th>
+              <th>Status</th>
+              <th>Updated</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             {buyers.length === 0 ? (
               <tr>
-                <td colSpan={9} className="text-center py-6 text-gray-500 border-b border-gray-200">
-                  No buyers found
-                </td>
+                <td colSpan={9}>No buyers found</td>
               </tr>
             ) : (
               buyers.map((b) => (
-                <tr key={b.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 border-b border-gray-200">{b.fullName}</td>
-                  <td className="px-4 py-3 border-b border-gray-200">{b.phone}</td>
-                  <td className="px-4 py-3 border-b border-gray-200">{b.city}</td>
-                  <td className="px-4 py-3 border-b border-gray-200">{b.propertyType}</td>
-                  <td className="px-4 py-3 border-b border-gray-200">{b.budgetMin ?? 0} – {b.budgetMax ?? 0}</td>
-                  <td className="px-4 py-3 border-b border-gray-200">{b.timeline}</td>
-                  <td className="px-4 py-3 border-b border-gray-200">{b.status}</td>
-                  <td className="px-4 py-3 border-b border-gray-200">{new Date(b.updatedAt).toLocaleDateString()}</td>
-                  <td className="px-4 py-3 border-b border-gray-200">
-                    <Link href={`/buyers/${b.id}`} className="text-blue-600 hover:text-blue-800">
-                      View / Edit
-                    </Link>
+                <tr key={b.id}>
+                  <td>{b.fullName}</td>
+                  <td>{b.phone}</td>
+                  <td>{b.city}</td>
+                  <td>{b.propertyType}</td>
+                  <td>{b.budgetMin ?? 0} – {b.budgetMax ?? 0}</td>
+                  <td>{b.timeline}</td>
+                  <td>{b.status}</td>
+                  <td>{new Date(b.updatedAt).toLocaleDateString()}</td>
+                  <td>
+                    <Link href={`/buyers/${b.id}`}>View / Edit</Link>
                   </td>
                 </tr>
               ))
@@ -264,26 +247,126 @@ useEffect(() => {
         </table>
       </div>
 
-      {/* Pagination */}
-      <div className="flex items-center justify-center gap-4 mt-6">
-        <button
-          disabled={page <= 1}
-          onClick={() => setPage(page - 1)}
-          className="px-4 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 disabled:opacity-50"
-        >
-          Previous
-        </button>
-        <span className="text-gray-700 font-medium">
-          Page {page} of {Math.ceil(total / pageSize)}
-        </span>
-        <button
-          disabled={page * pageSize >= total}
-          onClick={() => setPage(page + 1)}
-          className="px-4 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 disabled:opacity-50"
-        >
-          Next
-        </button>
+      <div className="pagination">
+        <button disabled={page <= 1} onClick={() => setPage(page - 1)}>Previous</button>
+        <span>Page {page} of {Math.ceil(total / pageSize)}</span>
+        <button disabled={page * pageSize >= total} onClick={() => setPage(page + 1)}>Next</button>
       </div>
+
+      <style jsx>{`
+        .buyers-page {
+          padding: 2rem;
+          margin-top:8rem;
+          min-height: 100vh;
+          background-color: #f9fafb;
+          font-family: sans-serif;
+        }
+
+        h1 {
+          font-size: 2rem;
+          font-weight: bold;
+          margin-bottom: 1rem;
+          color: #111827;
+          text-align: center;
+        }
+
+        .search-container input,
+        .filters-container select,
+        .csv-import input {
+          padding: 0.5rem 0.75rem;
+          border-radius: 0.375rem;
+          border: 1px solid #9ca3af;
+          outline: none;
+        }
+
+        .search-container input:focus,
+        .filters-container select:focus,
+        .csv-import input:focus {
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+
+        .filters-container {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
+        }
+
+        .csv-import {
+          margin-bottom: 1rem;
+        }
+
+        .csv-errors h2 {
+          color: #b91c1c;
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+        }
+
+        .table-container {
+          overflow-x-auto;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+          border-radius: 0.5rem;
+          margin-bottom: 1rem;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          background-color: #ffffff;
+        }
+
+        th, td {
+          padding: 0.75rem 1rem;
+          border-bottom: 1px solid #e5e7eb;
+          text-align: left;
+        }
+
+        tr:hover {
+          background-color: #f3f4f6;
+        }
+
+        .csv-export button,
+        .pagination button {
+          padding: 0.5rem 1rem;
+          border-radius: 0.375rem;
+          border: none;
+          cursor: pointer;
+          font-weight: 500;
+        }
+
+        .csv-export button {
+          background-color: #16a34a;
+          color: #fff;
+        }
+
+        .csv-export button:hover {
+          background-color: #15803d;
+        }
+
+        .pagination {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 1rem;
+          margin-top: 1rem;
+        }
+
+        .pagination button {
+          background-color: #bfdbfe;
+          color: #1e40af;
+        }
+
+        .pagination button:hover {
+          background-color: #93c5fd;
+        }
+
+        .pagination button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      `}</style>
     </div>
+    </>
   );
 }

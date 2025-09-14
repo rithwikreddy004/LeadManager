@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 
+
+import Navbar from "../../globalnavbar";
+
 type City = "Chandigarh" | "Mohali" | "Zirakpur" | "Panchkula" | "Other";
 type PropertyType = "Apartment" | "Villa" | "Plot" | "Office" | "Retail";
 type Status =
@@ -57,7 +60,7 @@ export default function BuyerPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch buyer + history on mount
+  // Fetch buyer + history
   useEffect(() => {
     async function fetchBuyer() {
       setLoading(true);
@@ -111,57 +114,51 @@ export default function BuyerPage() {
     }
   };
 
-  if (loading) return <div className="p-6 text-gray-600">Loading...</div>;
-  if (!buyer || !formData) return <div className="p-6 text-red-600">Buyer not found</div>;
+  if (loading) return <div className="bp-page">Loading...</div>;
+  if (!buyer || !formData) return <div className="bp-page error">Buyer not found</div>;
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">View / Edit Buyer</h1>
-      {message && <p className="mb-4 text-red-600">{message}</p>}
+    <>
+    <Navbar/>
+    <div className="bp-page">
+      <h1>View / Edit Buyer</h1>
+      {message && <p className="message">{message}</p>}
 
-      <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="form-container">
         <input type="hidden" value={formData.updatedAt} />
 
-        
         <div>
-          <label className="block text-gray-700 font-medium">Full Name</label>
+          <label>Full Name</label>
           <input
             type="text"
-            className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
             value={formData.fullName}
             onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
             required
           />
         </div>
 
-        
         <div>
-          <label className="block text-gray-700 font-medium">Phone</label>
+          <label>Phone</label>
           <input
             type="text"
-            className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
             required
           />
         </div>
 
-        
         <div>
-          <label className="block text-gray-700 font-medium">Email</label>
+          <label>Email</label>
           <input
             type="email"
-            className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
             value={formData.email || ""}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           />
         </div>
 
-        
         <div>
-          <label className="block text-gray-700 font-medium">City</label>
+          <label>City</label>
           <select
-            className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
             value={formData.city}
             onChange={(e) => setFormData({ ...formData, city: e.target.value as City })}
             required
@@ -175,13 +172,13 @@ export default function BuyerPage() {
           </select>
         </div>
 
-        
         <div>
-          <label className="block text-gray-700 font-medium">Property Type</label>
+          <label>Property Type</label>
           <select
-            className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
             value={formData.propertyType}
-            onChange={(e) => setFormData({ ...formData, propertyType: e.target.value as PropertyType })}
+            onChange={(e) =>
+              setFormData({ ...formData, propertyType: e.target.value as PropertyType })
+            }
             required
           >
             <option value="">Select property type</option>
@@ -193,31 +190,27 @@ export default function BuyerPage() {
           </select>
         </div>
 
-        
         <div>
-          <label className="block text-gray-700 font-medium">Status</label>
+          <label>Status</label>
           <select
-            className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
             value={formData.status}
             onChange={(e) => setFormData({ ...formData, status: e.target.value as Status })}
             required
           >
             <option value="">Select status</option>
-            <option value="New">New</option>
-            <option value="Qualified">Qualified</option>
-            <option value="Contacted">Contacted</option>
-            <option value="Visited">Visited</option>
-            <option value="Negotiation">Negotiation</option>
-            <option value="Converted">Converted</option>
-            <option value="Dropped">Dropped</option>
+            {["New", "Qualified", "Contacted", "Visited", "Negotiation", "Converted", "Dropped"].map(
+              (s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              )
+            )}
           </select>
         </div>
 
-        
         <div>
-          <label className="block text-gray-700 font-medium">Timeline</label>
+          <label>Timeline</label>
           <select
-            className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
             value={formData.timeline}
             onChange={(e) => setFormData({ ...formData, timeline: e.target.value as Timeline })}
             required
@@ -230,44 +223,37 @@ export default function BuyerPage() {
           </select>
         </div>
 
-        
-        <div className="flex gap-2">
-          <div className="flex-1">
-            <label className="block text-gray-700 font-medium">Budget Min</label>
+        <div className="budget-row">
+          <div>
+            <label>Budget Min</label>
             <input
               type="number"
-              className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
               value={formData.budgetMin ?? ""}
               onChange={(e) => setFormData({ ...formData, budgetMin: Number(e.target.value) })}
             />
           </div>
-          <div className="flex-1">
-            <label className="block text-gray-700 font-medium">Budget Max</label>
+          <div>
+            <label>Budget Max</label>
             <input
               type="number"
-              className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
               value={formData.budgetMax ?? ""}
               onChange={(e) => setFormData({ ...formData, budgetMax: Number(e.target.value) })}
             />
           </div>
         </div>
 
-        
         <div>
-          <label className="block text-gray-700 font-medium">Notes</label>
+          <label>Notes</label>
           <textarea
-            className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
             value={formData.notes ?? ""}
             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
           />
         </div>
 
-        
         <div>
-          <label className="block text-gray-700 font-medium">Tags</label>
+          <label>Tags</label>
           <input
             type="text"
-            className="mt-1 w-full border border-gray-300 rounded px-3 py-2"
             value={formData.tags?.join(", ") ?? ""}
             onChange={(e) =>
               setFormData({ ...formData, tags: e.target.value.split(",").map((t) => t.trim()) })
@@ -275,29 +261,134 @@ export default function BuyerPage() {
           />
         </div>
 
-        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-          Save
-        </button>
+        <button type="submit">Save</button>
       </form>
 
-      
-      <h2 className="text-2xl font-bold mt-8 mb-4 text-gray-800">Last 5 Changes</h2>
-      <div className="bg-white shadow rounded-lg p-4">
+      <h2>Last 5 Changes</h2>
+      <div className="history-container">
         {history.length === 0 ? (
-          <p className="text-gray-500">No history available</p>
+          <p>No history available</p>
         ) : (
-          <ul className="space-y-2">
+          <ul>
             {history.map((h) => (
-              <li key={h.id} className="border-b border-gray-200 pb-2">
-                <div className="text-gray-700 font-medium">
+              <li key={h.id}>
+                <div className="history-header">
                   {h.changedBy} — {new Date(h.changedAt).toLocaleString()}
                 </div>
-                <pre className="text-sm text-gray-600">{JSON.stringify(h.diff, null, 2)}</pre>
+                <pre>{JSON.stringify(h.diff, null, 2)}</pre>
               </li>
             ))}
           </ul>
         )}
       </div>
+
+      <style jsx>{`
+        .bp-page {
+          padding: 2rem;
+          min-height: 100vh;
+          background-color: #f9fafb;
+          font-family: sans-serif;
+          margin-top:6rem;
+        }
+
+        h1 {
+          font-size: 2rem;
+          font-weight: bold;
+          margin-bottom: 1.5rem;
+          color: #111827;
+        }
+
+        .message {
+          color: #b91c1c;
+          margin-bottom: 1rem;
+        }
+
+        .form-container {
+          background-color: #ffffff;
+          padding: 1.5rem;
+          border-radius: 0.5rem;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        label {
+          font-weight: 500;
+          color: #374151;
+        }
+
+        input,
+        select,
+        textarea {
+          width: 100%;
+          padding: 0.5rem 0.75rem;
+          border: 1px solid #9ca3af;
+          border-radius: 0.375rem;
+          outline: none;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+        }
+
+        .budget-row {
+          display: flex;
+          gap: 1rem;
+        }
+
+        button {
+          width: fit-content;
+          padding: 0.5rem 1rem;
+          background-color: #2563eb;
+          color: #fff;
+          font-weight: 500;
+          border: none;
+          border-radius: 0.375rem;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+
+        button:hover {
+          background-color: #1d4ed8;
+        }
+
+        h2 {
+          font-size: 1.5rem;
+          font-weight: bold;
+          margin-top: 2rem;
+          margin-bottom: 1rem;
+          color: #111827;
+        }
+
+        .history-container {
+          background-color: #ffffff;
+          padding: 1rem;
+          border-radius: 0.5rem;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .history-header {
+          font-weight: 500;
+          color: #374151;
+        }
+
+        pre {
+          background-color: #f3f4f6;
+          padding: 0.5rem;
+          border-radius: 0.375rem;
+          overflow-x: auto;
+          font-size: 0.875rem;
+        }
+
+        .error {
+          color: #b91c1c;
+        }
+      `}</style>
     </div>
+    </>
   );
 }

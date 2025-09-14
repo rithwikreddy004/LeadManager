@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { buyerSchema } from "../../schemas/buyer";
+import Navbar from "../../globalnavbar";
 
 export default function CreateBuyerPage() {
   const {
@@ -29,7 +30,7 @@ export default function CreateBuyerPage() {
       if (!res.ok) {
         if (res.status === 401) {
           alert("You are not logged in! Please login first.");
-          window.location.href = "/login"; // optional: redirect
+          window.location.href = "/login";
         } else {
           alert("Error: " + (resData.error || "Something went wrong"));
         }
@@ -43,184 +44,120 @@ export default function CreateBuyerPage() {
     }
   };
 
-
-  const inputClass =
-    "w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500";
-  const labelClass = "block font-medium mb-1";
-  const errorClass = "text-red-500 text-sm mt-1";
-
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Create Buyer Lead</h1>
-
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        
-        <div>
-          <label className={labelClass}>Full Name</label>
-          <input {...register("fullName")} className={inputClass} />
+    <>
+    <Navbar/>
+    <div className="form-container">
+      <h1>Create Buyer Lead</h1>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="form-group">
+          <label>Full Name</label>
+          <input {...register("fullName")} />
           {errors.fullName?.message && (
-            <p className={errorClass}>{errors.fullName.message}</p>
+            <p className="error">{errors.fullName.message}</p>
           )}
         </div>
 
-        
-        <div>
-          <label className={labelClass}>Email</label>
-          <input {...register("email")} className={inputClass} />
-          {errors.email?.message && (
-            <p className={errorClass}>{errors.email.message}</p>
-          )}
+        <div className="form-group">
+          <label>Email</label>
+          <input {...register("email")} />
+          {errors.email?.message && <p className="error">{errors.email.message}</p>}
         </div>
 
-        
-        <div>
-          <label className={labelClass}>Phone</label>
-          <input {...register("phone")} className={inputClass} />
-          {errors.phone?.message && (
-            <p className={errorClass}>{errors.phone.message}</p>
-          )}
+        <div className="form-group">
+          <label>Phone</label>
+          <input {...register("phone")} />
+          {errors.phone?.message && <p className="error">{errors.phone.message}</p>}
         </div>
 
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className={labelClass}>City</label>
-            <select {...register("city")} className={inputClass}>
-              {["Chandigarh", "Mohali", "Zirakpur", "Panchkula", "Other"].map(
-                (c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                )
-              )}
+        <div className="grid-2">
+          <div className="form-group">
+            <label>City</label>
+            <select {...register("city")}>
+              {["Chandigarh", "Mohali", "Zirakpur", "Panchkula", "Other"].map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
             </select>
-            {errors.city?.message && (
-              <p className={errorClass}>{errors.city.message}</p>
-            )}
+            {errors.city?.message && <p className="error">{errors.city.message}</p>}
           </div>
 
-          <div>
-            <label className={labelClass}>Property Type</label>
-            <select {...register("propertyType")} className={inputClass}>
+          <div className="form-group">
+            <label>Property Type</label>
+            <select {...register("propertyType")}>
               {["Apartment", "Villa", "Plot", "Office", "Retail"].map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
+                <option key={p} value={p}>{p}</option>
               ))}
             </select>
-            {errors.propertyType?.message && (
-              <p className={errorClass}>{errors.propertyType.message}</p>
-            )}
+            {errors.propertyType?.message && <p className="error">{errors.propertyType.message}</p>}
           </div>
         </div>
 
-        
         {["Apartment", "Villa"].includes(propertyType) && (
-          <div>
-            <label className={labelClass}>BHK</label>
-            <select {...register("bhk")} className={inputClass}>
+          <div className="form-group">
+            <label>BHK</label>
+            <select {...register("bhk")}>
               {["Studio", "One", "Two", "Three", "Four"].map((b) => (
-                <option key={b} value={b}>
-                  {b}
-                </option>
+                <option key={b} value={b}>{b}</option>
               ))}
             </select>
-            {errors.bhk?.message && (
-              <p className={errorClass}>{errors.bhk.message}</p>
-            )}
+            {errors.bhk?.message && <p className="error">{errors.bhk.message}</p>}
           </div>
         )}
 
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className={labelClass}>Purpose</label>
-            <select {...register("purpose")} className={inputClass}>
+        <div className="grid-2">
+          <div className="form-group">
+            <label>Purpose</label>
+            <select {...register("purpose")}>
               {["Buy", "Rent"].map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
+                <option key={p} value={p}>{p}</option>
               ))}
             </select>
-            {errors.purpose?.message && (
-              <p className={errorClass}>{errors.purpose.message}</p>
-            )}
+            {errors.purpose?.message && <p className="error">{errors.purpose.message}</p>}
           </div>
 
-          <div>
-            <label className={labelClass}>Timeline</label>
-            <select {...register("timeline")} className={inputClass}>
-              {[
-                "ZeroToThreeMonths",
-                "ThreeToSixMonths",
-                "GreaterThanSixMonths",
-                "Exploring",
-              ].map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
+          <div className="form-group">
+            <label>Timeline</label>
+            <select {...register("timeline")}>
+              {["ZeroToThreeMonths", "ThreeToSixMonths", "GreaterThanSixMonths", "Exploring"].map((t) => (
+                <option key={t} value={t}>{t}</option>
               ))}
             </select>
-            {errors.timeline?.message && (
-              <p className={errorClass}>{errors.timeline.message}</p>
-            )}
+            {errors.timeline?.message && <p className="error">{errors.timeline.message}</p>}
           </div>
         </div>
 
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className={labelClass}>Budget Min (INR)</label>
-            <input
-              type="number"
-              {...register("budgetMin", { valueAsNumber: true })}
-              className={inputClass}
-            />
-            {errors.budgetMin?.message && (
-              <p className={errorClass}>{errors.budgetMin.message}</p>
-            )}
+        <div className="grid-2">
+          <div className="form-group">
+            <label>Budget Min (INR)</label>
+            <input type="number" {...register("budgetMin", { valueAsNumber: true })} />
+            {errors.budgetMin?.message && <p className="error">{errors.budgetMin.message}</p>}
           </div>
 
-          <div>
-            <label className={labelClass}>Budget Max (INR)</label>
-            <input
-              type="number"
-              {...register("budgetMax", { valueAsNumber: true })}
-              className={inputClass}
-            />
-            {errors.budgetMax?.message && (
-              <p className={errorClass}>{errors.budgetMax.message}</p>
-            )}
+          <div className="form-group">
+            <label>Budget Max (INR)</label>
+            <input type="number" {...register("budgetMax", { valueAsNumber: true })} />
+            {errors.budgetMax?.message && <p className="error">{errors.budgetMax.message}</p>}
           </div>
         </div>
 
-        
-        <div>
-          <label className={labelClass}>Source</label>
-          <select {...register("source")} className={inputClass}>
+        <div className="form-group">
+          <label>Source</label>
+          <select {...register("source")}>
             {["Website", "Referral", "WalkIn", "Call", "Other"].map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
+              <option key={s} value={s}>{s}</option>
             ))}
           </select>
-          {errors.source?.message && (
-            <p className={errorClass}>{errors.source.message}</p>
-          )}
+          {errors.source?.message && <p className="error">{errors.source.message}</p>}
         </div>
 
-        
-        <div>
-          <label className={labelClass}>Notes</label>
-          <textarea {...register("notes")} className={inputClass} rows={3} />
-          {errors.notes?.message && (
-            <p className={errorClass}>{errors.notes.message}</p>
-          )}
+        <div className="form-group">
+          <label>Notes</label>
+          <textarea {...register("notes")} rows={3} />
+          {errors.notes?.message && <p className="error">{errors.notes.message}</p>}
         </div>
 
-        
-        <div>
-          <label className={labelClass}>Tags (comma-separated)</label>
+        <div className="form-group">
+          <label>Tags (comma-separated)</label>
           <input
             {...register("tags", {
               setValueAs: (v) =>
@@ -229,21 +166,107 @@ export default function CreateBuyerPage() {
                   : [],
             })}
             placeholder="e.g. premium, hot lead"
-            className={inputClass}
           />
-          {errors.tags?.message && (
-            <p className={errorClass}>{errors.tags.message}</p>
-          )}
+          {errors.tags?.message && <p className="error">{errors.tags.message}</p>}
         </div>
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full bg-blue-600 text-white font-semibold py-3 rounded-md hover:bg-blue-700 disabled:opacity-50 transition"
-        >
-          Create Buyer
-        </button>
+        <button type="submit" disabled={isSubmitting}>Create Buyer</button>
       </form>
+
+      <style jsx>{`
+        .form-container {
+          marin-top:8rem;
+          max-width: 600px;
+          margin: 3rem auto;
+          padding: 2rem;
+          background-color: #111827; /* dark gray */
+          color: #f9fafb; /* white text */
+          border-radius: 0.5rem;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+          display: flex;
+          flex-direction: column;
+        }
+
+        h1 {
+          font-size: 2rem;
+          font-weight: bold;
+          margin-bottom: 1.5rem;
+          text-align: center;
+        }
+
+        form {
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+        }
+
+        .form-group {
+          display: flex;
+          flex-direction: column;
+        }
+
+        label {
+          font-weight: 500;
+          margin-bottom: 0.25rem;
+        }
+
+        input, select, textarea {
+          padding: 0.5rem 0.75rem;
+          border-radius: 0.375rem;
+          border: 1px solid #374151;
+          background-color: #1f2937;
+          color: #f9fafb;
+          outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 2px rgba(59,130,246,0.5);
+        }
+
+        textarea {
+          resize: vertical;
+        }
+
+        .grid-2 {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+          .grid-2 {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+
+        .error {
+          color: #f87171;
+          font-size: 0.875rem;
+          margin-top: 0.25rem;
+        }
+
+        button {
+          padding: 0.75rem;
+          background-color: #3b82f6;
+          color: #f9fafb;
+          font-weight: 600;
+          border: none;
+          border-radius: 0.375rem;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+          background-color: #2563eb;
+        }
+
+        button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      `}</style>
     </div>
+    </>
   );
 }
