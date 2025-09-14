@@ -11,9 +11,10 @@
 * [Tech Stack](#tech-stack)
 * [Setup](#setup)
 * [Pages & Features](#pages--features)
+* [Screenshots](#screenshots)
 * [Design Notes](#design-notes)
 * [Done vs Skipped](#done-vs-skipped)
-* [Screenshots](#screenshots)
+  
 
 ---
 
@@ -43,12 +44,12 @@ npm install
 Create a .env.local file in the project root:
 
 
-# Supabase (or your Postgres DB)
+Supabase (or your Postgres DB)
 DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DB_NAME
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
-# Optional: JWT secret
+Optional: JWT secret
 NEXTAUTH_SECRET=your-secret
 
 Replace USER, PASSWORD, HOST, PORT, and DB_NAME for local Postgres.
@@ -121,6 +122,39 @@ Visit http://localhost:3000
 
 ---
 
+## **Screenshots**
+
+
+![Landing Page](#)#Landing Page
+<img width="1915" height="865" alt="Screenshot 2025-09-14 202157" src="https://github.com/user-attachments/assets/d2192ec9-3dcd-40b3-9754-9e8c11a971cc" />
+
+
+![Create Lead](#)#Create Lead
+<img width="1883" height="859" alt="Screenshot 2025-09-14 202244" src="https://github.com/user-attachments/assets/10580676-a479-405c-b6cf-221b372698f9" />
+
+
+![Buyer List](#)#Buyer List
+<img width="1895" height="841" alt="Screenshot 2025-09-14 202404" src="https://github.com/user-attachments/assets/6ca72a06-c0e1-4c8b-97ae-3d186fedd704" />
+
+![CSV Import with row wise errors if any](#)#CSV Import 
+<img width="1883" height="857" alt="Screenshot 2025-09-14 202648" src="https://github.com/user-attachments/assets/8f9e253b-5271-459f-8237-fc8e38cf907f" />
+
+![Edit Lead](#)#Edit Lead
+<img width="1874" height="840" alt="Screenshot 2025-09-14 202734" src="https://github.com/user-attachments/assets/d8e12830-19bc-454b-bbe3-94f0a1fbc954" />
+
+
+<img width="1885" height="847" alt="Screenshot 2025-09-14 202757" src="https://github.com/user-attachments/assets/37030919-48b2-464a-aa27-6e9e8d66cb34" />
+
+
+
+
+---
+
+
+
+
+
+
 ## **Design Notes**
 
 * **Validation:** Both client (React + Zod) and server (API route + Zod)
@@ -155,33 +189,7 @@ Full-text search across multiple fields
 
 ---
 
-## **Screenshots**
 
-
-![Landing Page](#)#Landing Page
-<img width="1915" height="865" alt="Screenshot 2025-09-14 202157" src="https://github.com/user-attachments/assets/d2192ec9-3dcd-40b3-9754-9e8c11a971cc" />
-
-
-![Create Lead](#)#Create Lead
-<img width="1883" height="859" alt="Screenshot 2025-09-14 202244" src="https://github.com/user-attachments/assets/10580676-a479-405c-b6cf-221b372698f9" />
-
-
-![Buyer List](#)#Buyer List
-<img width="1895" height="841" alt="Screenshot 2025-09-14 202404" src="https://github.com/user-attachments/assets/6ca72a06-c0e1-4c8b-97ae-3d186fedd704" />
-
-![CSV Import with row wise errors if any](#)#CSV Import 
-<img width="1883" height="857" alt="Screenshot 2025-09-14 202648" src="https://github.com/user-attachments/assets/8f9e253b-5271-459f-8237-fc8e38cf907f" />
-
-![Edit Lead](#)#Edit Lead
-<img width="1874" height="840" alt="Screenshot 2025-09-14 202734" src="https://github.com/user-attachments/assets/d8e12830-19bc-454b-bbe3-94f0a1fbc954" />
-
-
-<img width="1885" height="847" alt="Screenshot 2025-09-14 202757" src="https://github.com/user-attachments/assets/37030919-48b2-464a-aa27-6e9e8d66cb34" />
-
-
-
-
----
 
 ## **Testing & Quality**
 
