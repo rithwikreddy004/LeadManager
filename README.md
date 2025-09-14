@@ -32,7 +32,7 @@
 
 Setup (Run Locally)
 1. Clone the repository
-git clone https://github.com/rithwikreddy004/buyer-lead-app.git
+git clone https://github.com/rithwikreddy004/buyerleadintake.git
 cd buyer-lead-app
 
 2. Install dependencies
