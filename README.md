@@ -1,7 +1,7 @@
 
 # LeadManager
 
-**Mini project:** Capture, list, and manage buyer leads with validation, search/filter, and CSV import/export.
+**Project:** Capture, list, and manage buyer leads with validation, search/filter, and CSV import/export.
 
 
 ---
@@ -33,13 +33,14 @@
 
 Setup (Run Locally)
 1. Clone the repository
-git clone https://github.com/rithwikreddy004/buyerleadintake.git
-cd buyer-lead-app
+git clone https://github.com/rithwikreddy004/LeadManager.git
 
-2. Install dependencies
+cd LeadManager
+
+3. Install dependencies
 npm install
 
-3. Environment Variables
+4. Environment Variables
 
 Create a .env.local file in the project root:
 
@@ -180,10 +181,7 @@ Visit http://localhost:3000
 * Form validations (client + server)
 Full-text search across multiple fields
 
-**⚠ Skipped / Future improvements**
-* Admin role for global editing (optional)
-* File uploads / attachments
-* Optimistic updates with rollback
+
 
 ---
 
