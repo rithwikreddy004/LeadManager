@@ -169,7 +169,7 @@ Visit http://localhost:3000
 
 ---
 
-## **Done vs Skipped**
+## **Done**
 
 **✅ Completed**
 
