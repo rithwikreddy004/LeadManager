@@ -1,5 +1,5 @@
 
-# Buyer Lead Intake App aka LeadManager
+# LeadManager
 
 **Mini project:** Capture, list, and manage buyer leads with validation, search/filter, and CSV import/export.
 
