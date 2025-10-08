@@ -1,4 +1,6 @@
+# 🚀 Deployment
 
+**Live App:** [https://leadmanager.vercel.app](https://lead-manager-kappa.vercel.app/)
 # LeadManager
 
 **Project:** Capture, list, and manage buyer leads with validation, search/filter, and CSV import/export.
